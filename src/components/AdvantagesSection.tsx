@@ -1,117 +1,140 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Battery, Shield, ThumbsUp, Zap, Upload, Award } from "lucide-react";
+import { Shield, Clock, Calculator, LineChart } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 const advantages = [
   {
-    icon: <Zap className="h-10 w-10 text-sentech" />,
+    icon: Shield,
+    title: "Гарантия 3 года",
+    description: "Официальная гарантия на оборудование и все монтажные работы"
+  },
+  {
+    icon: Clock,
+    title: "Монтаж за 1 день",
+    description: "Быстрая и профессиональная установка сплит-системы"
+  },
+  {
+    icon: Calculator,
+    title: "Бесплатный замер",
+    description: "Инженер приедет и рассчитает необходимую мощность бесплатно"
+  },
+  {
+    icon: LineChart,
     title: "Энергоэффективность",
-    description: "Класс A+++ позволяет существенно экономить на электроэнергии даже при постоянной работе"
-  },
-  {
-    icon: <Battery className="h-10 w-10 text-sentech" />,
-    title: "Увеличенный ресурс",
-    description: "Срок службы до 15 лет благодаря высококачественным компонентам и сборке"
-  },
-  {
-    icon: <Shield className="h-10 w-10 text-sentech" />,
-    title: "Гарантия 5 лет",
-    description: "Официальная гарантия от производителя на все модели сплит-систем Сентек"
-  },
-  {
-    icon: <ThumbsUp className="h-10 w-10 text-sentech" />,
-    title: "Тихая работа",
-    description: "Уровень шума от 22 дБ — тише шепота, не мешает спать и работать"
-  },
-  {
-    icon: <Upload className="h-10 w-10 text-sentech" />,
-    title: "Умное управление",
-    description: "Приложение для смартфона с возможностью удаленного контроля и настройки расписания"
-  },
-  {
-    icon: <Award className="h-10 w-10 text-sentech" />,
-    title: "Сертифицированная техника",
-    description: "Все модели прошли сертификацию и соответствуют международным стандартам качества"
+    description: "Системы класса А+++ с экономичным энергопотреблением"
   }
 ];
 
 const AdvantagesSection = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+          }
+        });
+      },
+      {
+        threshold: 0.1
+      }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <section id="advantages" className="py-16">
+    <section id="advantages" ref={sectionRef} className="py-20 bg-white section-reveal">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4">Почему выбирают <span className="text-sentech">Сентек</span></h2>
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Наши преимущества</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Наши климатические системы сочетают в себе инновационные технологии, надежность и современный дизайн
+            Выбирая Сентек, вы получаете не только высококачественное оборудование, но и первоклассный сервис
           </p>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {advantages.map((advantage, index) => (
-            <AdvantageCard 
-              key={index}
-              icon={advantage.icon}
-              title={advantage.title}
-              description={advantage.description}
-            />
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {advantages.map((item, index) => (
+            <div 
+              key={index} 
+              className="flex flex-col items-center text-center p-6 rounded-xl bg-sentech-bgLight hover-scale"
+              style={{ transitionDelay: `${index * 100}ms` }}
+            >
+              <div className="w-16 h-16 rounded-full bg-sentech flex items-center justify-center mb-4">
+                <item.icon size={28} className="text-white" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">{item.title}</h3>
+              <p className="text-gray-600">{item.description}</p>
+            </div>
           ))}
         </div>
 
-        <div className="mt-16 bg-gradient-to-r from-sentech-dark to-sentech rounded-2xl shadow-lg overflow-hidden">
+        <div className="mt-16 bg-gradient-to-r from-sentech to-sentech-light rounded-2xl overflow-hidden shadow-lg">
           <div className="grid grid-cols-1 md:grid-cols-2 items-center">
-            <div className="p-8 md:p-12">
-              <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">Профессиональная установка с гарантией</h3>
-              <p className="text-white/80 mb-6">
-                Наши сертифицированные специалисты выполнят монтаж сплит-систем любой сложности с соблюдением всех технических требований
-              </p>
-              <ul className="space-y-3 text-white">
-                <li className="flex items-center">
-                  <svg className="h-5 w-5 mr-2 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  Бесплатный выезд для замеров
-                </li>
-                <li className="flex items-center">
-                  <svg className="h-5 w-5 mr-2 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  Монтаж в день заказа или в удобное время
-                </li>
-                <li className="flex items-center">
-                  <svg className="h-5 w-5 mr-2 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  Гарантия на установку 3 года
-                </li>
-              </ul>
+            <div className="p-8 md:p-12 text-white">
+              <h3 className="text-2xl md:text-3xl font-bold mb-4 text-white">Как мы работаем</h3>
+              <div className="space-y-6">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white text-sentech flex items-center justify-center mr-4">
+                    <span className="font-bold">1</span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xl mb-1">Заявка</h4>
+                    <p className="text-white/90">Оставьте заявку на сайте или позвоните нам</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white text-sentech flex items-center justify-center mr-4">
+                    <span className="font-bold">2</span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xl mb-1">Выезд инженера</h4>
+                    <p className="text-white/90">Бесплатная консультация и точный расчет</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white text-sentech flex items-center justify-center mr-4">
+                    <span className="font-bold">3</span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xl mb-1">Монтаж</h4>
+                    <p className="text-white/90">Профессиональная установка за 1 день</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-sentech-accent text-white flex items-center justify-center mr-4">
+                    <span className="font-bold">4</span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xl mb-1">Готово!</h4>
+                    <p className="text-white/90">Наслаждайтесь комфортным климатом</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="h-64 md:h-auto relative">
+            <div className="hidden md:block">
               <img 
-                src="https://images.unsplash.com/photo-1620465381914-445cc6cda6ae?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
-                alt="Установка сплит-систем" 
+                src="https://images.unsplash.com/photo-1621905251918-48416bd8575a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                alt="Монтаж сплит-системы" 
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-sentech-dark/70 to-transparent md:bg-transparent"></div>
             </div>
           </div>
         </div>
       </div>
     </section>
-  );
-};
-
-const AdvantageCard = ({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) => {
-  return (
-    <Card className="overflow-hidden hover:shadow-md transition-shadow">
-      <CardContent className="p-6">
-        <div className="flex flex-col items-center text-center">
-          <div className="mb-4 bg-sentech/10 p-4 rounded-full">
-            {icon}
-          </div>
-          <h3 className="text-xl font-semibold mb-2">{title}</h3>
-          <p className="text-gray-600">{description}</p>
-        </div>
-      </CardContent>
-    </Card>
   );
 };
 

@@ -1,187 +1,127 @@
-import { useState } from "react";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Snowflake, ThermometerSun } from "lucide-react";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useRef } from "react";
 
-interface Product {
-  id: number;
-  name: string;
-  model: string;
-  price: number;
-  image: string;
-  type: string;
-  features: string[];
-  isPopular: boolean;
-}
-
-const products: Product[] = [
+const products = [
   {
     id: 1,
-    name: "Сентек Оптима",
-    model: "ST-09",
-    price: 24990,
-    image: "https://images.unsplash.com/photo-1628744404730-5e143358539b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    type: "home",
-    features: ["Площадь до 25 м²", "Инверторный", "Wi-Fi управление"],
-    isPopular: true
+    name: "Сентек Эконом",
+    image: "https://images.unsplash.com/photo-1596121582659-a1b83afb3da8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+    power: "2.5 кВт",
+    noise: "24 дБ",
+    price: "32 000 ₽",
+    features: ["Охлаждение/обогрев", "Базовый фильтр", "LED-дисплей"]
   },
   {
     id: 2,
     name: "Сентек Комфорт",
-    model: "ST-12",
-    price: 32990,
-    image: "https://images.unsplash.com/photo-1613251806606-3c5d0e03c3bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    type: "home",
-    features: ["Площадь до 35 м²", "Инверторный", "Ионизация воздуха"],
-    isPopular: false
+    image: "https://images.unsplash.com/photo-1589861412787-e2a59c054773?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+    power: "3.5 кВт",
+    noise: "22 дБ",
+    price: "45 000 ₽",
+    features: ["Wi-Fi управление", "Ионизатор", "Ночной режим"]
   },
   {
     id: 3,
-    name: "Сентек Бизнес",
-    model: "ST-18",
-    price: 54990,
-    image: "https://images.unsplash.com/photo-1581275682300-b47bef572e3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    type: "business",
-    features: ["Площадь до 50 м²", "Инверторный", "Уровень шума 22 дБ"],
-    isPopular: false
+    name: "Сентек Премиум",
+    image: "https://images.unsplash.com/photo-1628744448839-a475c64e35e9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+    power: "5.0 кВт",
+    noise: "19 дБ",
+    price: "62 000 ₽",
+    features: ["Инверторная технология", "Климат-контроль", "Система самоочистки"]
   }
 ];
 
 const ProductsSection = () => {
-  const [activeTab, setActiveTab] = useState("all");
+  const sectionRef = useRef<HTMLElement>(null);
 
-  const filteredProducts = activeTab === "all" 
-    ? products 
-    : products.filter(product => product.type === activeTab);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+          }
+        });
+      },
+      {
+        threshold: 0.1
+      }
+    );
 
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
+  
   return (
-    <section id="products" className="py-16 bg-gray-50">
+    <section id="products" ref={sectionRef} className="py-20 bg-sentech-bgLight section-reveal">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4">Каталог сплит-систем <span className="text-sentech">Сентек</span></h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Наши популярные модели</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Выберите оптимальное решение для вашего дома или офиса из нашего ассортимента климатической техники
+            Выберите подходящую модель кондиционера Сентек для вашего помещения. Мы предлагаем оптимальное сочетание цены и качества.
           </p>
         </div>
-
-        <Tabs defaultValue="all" className="w-full">
-          <div className="flex justify-center mb-8">
-            <TabsList>
-              <TabsTrigger 
-                value="all" 
-                onClick={() => setActiveTab("all")}
-                className="data-[state=active]:bg-sentech data-[state=active]:text-white"
-              >
-                Все модели
-              </TabsTrigger>
-              <TabsTrigger 
-                value="home" 
-                onClick={() => setActiveTab("home")}
-                className="data-[state=active]:bg-sentech data-[state=active]:text-white"
-              >
-                Для дома
-              </TabsTrigger>
-              <TabsTrigger 
-                value="business" 
-                onClick={() => setActiveTab("business")}
-                className="data-[state=active]:bg-sentech data-[state=active]:text-white"
-              >
-                Для бизнеса
-              </TabsTrigger>
-            </TabsList>
-          </div>
-
-          <TabsContent value="all" className="mt-0">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="home" className="mt-0">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="business" className="mt-0">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          </TabsContent>
-        </Tabs>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {products.map((product) => (
+            <Card key={product.id} className="overflow-hidden hover-scale border border-gray-100 shadow-md">
+              <div className="h-48 overflow-hidden">
+                <img 
+                  src={product.image} 
+                  alt={product.name} 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <CardHeader>
+                <CardTitle className="text-xl text-sentech">{product.name}</CardTitle>
+                <CardDescription>Современные технологии комфорта</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-3 gap-4 mb-4 text-sm">
+                  <div className="text-center p-2 bg-gray-50 rounded-lg">
+                    <p className="text-gray-500">Мощность</p>
+                    <p className="font-semibold">{product.power}</p>
+                  </div>
+                  <div className="text-center p-2 bg-gray-50 rounded-lg">
+                    <p className="text-gray-500">Шум</p>
+                    <p className="font-semibold">{product.noise}</p>
+                  </div>
+                  <div className="text-center p-2 bg-sentech/5 rounded-lg">
+                    <p className="text-gray-500">Цена</p>
+                    <p className="font-semibold text-sentech">{product.price}</p>
+                  </div>
+                </div>
+                <ul className="text-sm text-gray-600 space-y-1">
+                  {product.features.map((feature, index) => (
+                    <li key={index} className="flex items-center">
+                      <span className="w-1.5 h-1.5 bg-sentech rounded-full mr-2"></span>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+              <CardFooter>
+                <Button className="w-full bg-sentech hover:bg-sentech-dark">Подробнее</Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
 
         <div className="text-center mt-12">
           <Button variant="outline" className="border-sentech text-sentech hover:bg-sentech/10">
-            Смотреть все модели
-            <ArrowRight className="ml-2 h-4 w-4" />
+            Смотреть весь каталог
           </Button>
         </div>
       </div>
     </section>
-  );
-};
-
-const ProductCard = ({ product }: { product: Product }) => {
-  return (
-    <Card className="overflow-hidden transition-all hover:shadow-lg group">
-      <div className="relative">
-        <img 
-          src={product.image} 
-          alt={product.name} 
-          className="w-full h-48 object-cover transition-transform group-hover:scale-105" 
-        />
-        {product.isPopular && (
-          <Badge className="absolute top-4 right-4 bg-sentech-accent">Популярная модель</Badge>
-        )}
-      </div>
-
-      <CardHeader>
-        <div className="flex justify-between items-start">
-          <div>
-            <h3 className="text-xl font-semibold">{product.name}</h3>
-            <p className="text-gray-500">Модель: {product.model}</p>
-          </div>
-          <div className="flex space-x-2">
-            <Snowflake className="h-5 w-5 text-sentech" />
-            <ThermometerSun className="h-5 w-5 text-sentech-accent" />
-          </div>
-        </div>
-      </CardHeader>
-
-      <CardContent>
-        <ul className="space-y-2">
-          {product.features.map((feature, index) => (
-            <li key={index} className="flex items-center text-sm">
-              <svg className="h-4 w-4 text-sentech mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              {feature}
-            </li>
-          ))}
-        </ul>
-
-        <div className="mt-4">
-          <p className="font-bold text-2xl text-gray-900">{product.price.toLocaleString()} ₽</p>
-        </div>
-      </CardContent>
-
-      <CardFooter className="flex justify-between">
-        <Button variant="outline" className="w-1/2 border-sentech text-sentech hover:bg-sentech/10">
-          Подробнее
-        </Button>
-        <Button className="w-1/2 bg-sentech hover:bg-sentech-dark ml-2">
-          Заказать
-        </Button>
-      </CardFooter>
-    </Card>
   );
 };
 

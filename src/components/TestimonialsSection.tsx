@@ -1,163 +1,157 @@
-import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-interface Testimonial {
-  id: number;
-  name: string;
-  position: string;
-  avatar: string;
-  rating: number;
-  text: string;
-  date: string;
-}
-
-const testimonials: Testimonial[] = [
+const testimonials = [
   {
     id: 1,
-    name: "Александр Петров",
-    position: "Владелец квартиры",
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+    name: "Анна Сергеева",
+    role: "Владелец квартиры",
+    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100&q=80",
     rating: 5,
-    text: "Приобрел сплит-систему Сентек для квартиры площадью 35 кв.м. Очень доволен - быстро охлаждает помещение, работает почти бесшумно. Отдельно хочу отметить качество сборки и стильный дизайн.",
-    date: "15.03.2025"
+    content: "Установили кондиционер Сентек Комфорт в спальню. Очень тихий, прекрасно охлаждает помещение. Монтаж выполнили аккуратно и быстро, за что отдельное спасибо. Теперь думаем заказать еще один в гостиную.",
+    image_work: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
   },
   {
     id: 2,
-    name: "Екатерина Иванова",
-    position: "Руководитель офиса",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+    name: "Дмитрий Ковалев",
+    role: "Директор ресторана",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100&q=80",
     rating: 5,
-    text: "Установили три сплит-системы Сентек в офисе. Персонал очень доволен - в помещении поддерживается оптимальная температура даже в жару. Экономичные в плане электроэнергии, что для бизнеса важно.",
-    date: "02.04.2025"
+    content: "Заказывали установку трех сплит-систем для нашего ресторана. Профессиональный подход, грамотный инженер, который помог подобрать оптимальные модели. Все работает уже полгода без нареканий.",
+    image_work: "https://images.unsplash.com/photo-1590756254933-2873d72a83c6?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
   },
   {
     id: 3,
-    name: "Дмитрий Соколов",
-    position: "Владелец загородного дома",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+    name: "Елена Новикова",
+    role: "Руководитель офиса",
+    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100&q=80",
     rating: 4,
-    text: "Приобрели две сплит-системы для дома. Монтаж был выполнен профессионально и быстро. Система очистки воздуха работает отлично, особенно это ценно для загородного дома. Единственное - хотелось бы более детальную инструкцию на русском.",
-    date: "10.04.2025"
+    content: "Оборудовали климатической системой Сентек наш офис. Результатом довольны — работает бесперебойно и эффективно. Особенно понравилась возможность управления через Wi-Fi. Рекомендую данную компанию.",
+    image_work: "https://images.unsplash.com/photo-1594193306461-03b5ee4c5935?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
   }
 ];
 
 const TestimonialsSection = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const isMobile = window.innerWidth < 768;
-  const itemsPerPage = isMobile ? 1 : 3;
-  
-  const nextTestimonial = () => {
-    setCurrentIndex((prevIndex) => 
-      prevIndex + itemsPerPage >= testimonials.length ? 0 : prevIndex + 1
+  const [activeIndex, setActiveIndex] = useState(0);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+          }
+        });
+      },
+      {
+        threshold: 0.1
+      }
     );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
+
+  const handlePrev = () => {
+    setActiveIndex((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
   };
-  
-  const prevTestimonial = () => {
-    setCurrentIndex((prevIndex) => 
-      prevIndex === 0 ? Math.max(0, testimonials.length - itemsPerPage) : prevIndex - 1
-    );
+
+  const handleNext = () => {
+    setActiveIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
   };
-  
-  // Calculate visible testimonials
-  const visibleTestimonials = [];
-  for (let i = 0; i < itemsPerPage; i++) {
-    const index = (currentIndex + i) % testimonials.length;
-    visibleTestimonials.push(testimonials[index]);
-  }
+
+  const activeTestimonial = testimonials[activeIndex];
 
   return (
-    <section id="testimonials" className="py-16 bg-gray-50">
+    <section id="testimonials" ref={sectionRef} className="py-20 bg-sentech-bgLight section-reveal">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4">Отзывы наших клиентов</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Отзывы наших клиентов</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Узнайте, что говорят пользователи сплит-систем Сентек о своем опыте использования нашей техники
+            Мнения тех, кто уже оценил качество нашей работы и комфорт климатических систем Сентек
           </p>
         </div>
-
-        <div className="relative">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {visibleTestimonials.map((testimonial) => (
-              <TestimonialCard key={testimonial.id} testimonial={testimonial} />
-            ))}
-          </div>
-          
-          <div className="flex justify-center mt-8 space-x-4">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={prevTestimonial}
-              className="rounded-full hover:bg-sentech/10 hover:text-sentech"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
+        
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-white rounded-2xl overflow-hidden shadow-lg">
+            <div className="p-8 md:p-10">
+              <div className="flex items-center space-x-1 mb-4">
+                {[...Array(5)].map((_, i) => (
+                  <Star 
+                    key={i} 
+                    size={20} 
+                    className={i < activeTestimonial.rating ? "fill-sentech-accent text-sentech-accent" : "text-gray-300"}
+                  />
+                ))}
+              </div>
+              
+              <blockquote className="text-lg italic text-gray-600 mb-6">
+                "{activeTestimonial.content}"
+              </blockquote>
+              
+              <div className="flex items-center">
+                <img 
+                  src={activeTestimonial.image} 
+                  alt={activeTestimonial.name} 
+                  className="w-12 h-12 rounded-full object-cover mr-4"
+                />
+                <div>
+                  <h4 className="font-bold text-sentech">{activeTestimonial.name}</h4>
+                  <p className="text-sm text-gray-500">{activeTestimonial.role}</p>
+                </div>
+              </div>
+              
+              <div className="flex justify-between mt-8">
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  onClick={handlePrev}
+                  className="border-sentech text-sentech hover:bg-sentech/10 rounded-full"
+                >
+                  <ChevronLeft size={18} />
+                </Button>
+                <div className="flex space-x-2">
+                  {testimonials.map((_, idx) => (
+                    <button
+                      key={idx}
+                      className={`w-2.5 h-2.5 rounded-full ${
+                        idx === activeIndex ? "bg-sentech" : "bg-gray-300"
+                      }`}
+                      onClick={() => setActiveIndex(idx)}
+                    />
+                  ))}
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  onClick={handleNext}
+                  className="border-sentech text-sentech hover:bg-sentech/10 rounded-full"
+                >
+                  <ChevronRight size={18} />
+                </Button>
+              </div>
+            </div>
             
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={nextTestimonial}
-              className="rounded-full hover:bg-sentech/10 hover:text-sentech"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
-          </div>
-        </div>
-
-        <div className="mt-16 text-center">
-          <div className="bg-white p-8 rounded-xl shadow-sm max-w-3xl mx-auto">
-            <div className="flex justify-center mb-4">
+            <div className="h-full">
               <img 
-                src="https://images.unsplash.com/photo-1560546376-1683917956f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" 
-                alt="Доверие клиентов" 
-                className="w-16 h-16 object-cover rounded-full"
+                src={activeTestimonial.image_work} 
+                alt="Установленная сплит-система" 
+                className="w-full h-full object-cover"
               />
             </div>
-            <h3 className="text-2xl font-semibold mb-2">Доверие более 10 000 клиентов</h3>
-            <p className="text-gray-600 mb-6">
-              Мы гордимся тем, что более 10 000 клиентов уже выбрали сплит-системы Сентек для своих домов и офисов. Присоединяйтесь к ним и оцените комфорт, который создают наши климатические системы.
-            </p>
-            <Button className="bg-sentech hover:bg-sentech-dark">
-              Оставить заявку
-            </Button>
           </div>
         </div>
       </div>
     </section>
-  );
-};
-
-const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
-  return (
-    <Card className="h-full">
-      <CardContent className="p-6">
-        <div className="flex items-center mb-4">
-          <img 
-            src={testimonial.avatar} 
-            alt={testimonial.name} 
-            className="w-12 h-12 rounded-full object-cover mr-4"
-          />
-          <div>
-            <h4 className="font-semibold">{testimonial.name}</h4>
-            <p className="text-sm text-gray-500">{testimonial.position}</p>
-          </div>
-        </div>
-        
-        <div className="flex mb-4">
-          {[...Array(5)].map((_, i) => (
-            <Star 
-              key={i} 
-              className={`h-4 w-4 ${i < testimonial.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`} 
-            />
-          ))}
-        </div>
-        
-        <p className="text-gray-600 mb-4">{testimonial.text}</p>
-        
-        <p className="text-sm text-gray-400">{testimonial.date}</p>
-      </CardContent>
-    </Card>
   );
 };
 
