@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Snow, Thermometer, Wind } from "lucide-react";
+import { ArrowRight, Snowflake, Thermometer, Wind } from "lucide-react";
 
 const HeroSection = () => {
   return (
@@ -33,7 +33,7 @@ const HeroSection = () => {
             <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="flex items-center space-x-3 p-3 bg-white/80 backdrop-blur-sm rounded-lg shadow-sm">
                 <div className="bg-sentech/10 p-2 rounded-full">
-                  <Snow className="h-5 w-5 text-sentech" />
+                  <Snowflake className="h-5 w-5 text-sentech" />
                 </div>
                 <div>
                   <p className="font-medium">Эффективное охлаждение</p>
